@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img" aria-label="Ilustração de capa para curso ux">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c0d14"/><stop offset=".52" stop-color="#8f5cff" stop-opacity=".25"/><stop offset="1" stop-color="#f29bcf" stop-opacity=".32"/></linearGradient><linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8f5cff"/><stop offset="1" stop-color="#f29bcf"/></linearGradient><radialGradient id="glow"><stop stop-color="#8f5cff" stop-opacity=".42"/><stop offset="1" stop-color="#8f5cff" stop-opacity="0"/></radialGradient><filter id="blur"><feGaussianBlur stdDeviation="45"/></filter></defs>
+<rect width="1200" height="600" rx="32" fill="#0d0d13"/><rect width="1200" height="600" rx="32" fill="url(#bg)"/><ellipse cx="600" cy="300" rx="470" ry="245" fill="url(#glow)" filter="url(#blur)"/>
+
+<rect x="310" y="118" width="578" height="360" rx="28" fill="#15131e" stroke="#ffffff" stroke-opacity=".25" stroke-width="2"/>
+<rect x="340" y="151" width="234" height="294" rx="17" fill="#211a31"/>
+<rect x="596" y="151" width="260" height="48" rx="12" fill="#ffffff" fill-opacity=".06"/>
+<rect x="616" y="169" width="110" height="9" rx="5" fill="#ffffff" fill-opacity=".72"/><circle cx="825" cy="175" r="8" fill="#c89eff"/>
+<rect x="596" y="216" width="260" height="125" rx="15" fill="url(#accent)" fill-opacity=".32"/>
+<path d="M624 313c35-61 60 11 93-40s55 34 109-26" fill="none" stroke="#f2dfff" stroke-width="5" stroke-linecap="round"/>
+<circle cx="717" cy="273" r="8" fill="#fff"/><circle cx="826" cy="247" r="8" fill="#fff"/>
+<rect x="596" y="359" width="119" height="85" rx="13" fill="#ffffff" fill-opacity=".08"/><rect x="728" y="359" width="128" height="85" rx="13" fill="#ffffff" fill-opacity=".08"/>
+<circle cx="456" cy="247" r="47" fill="url(#accent)" fill-opacity=".82"/><path d="M425 249h63m-31-31v63" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+<rect x="380" y="323" width="154" height="11" rx="6" fill="#fff" fill-opacity=".78"/><rect x="380" y="347" width="123" height="8" rx="4" fill="#fff" fill-opacity=".32"/><rect x="380" y="367" width="140" height="8" rx="4" fill="#fff" fill-opacity=".2"/>
+<circle cx="295" cy="208" r="12" fill="#eaa3e6"/><circle cx="916" cy="398" r="9" fill="#a78bfa"/>
+<path d="M0 520c200-50 360 60 600 20s390-100 600-30v90H0z" fill="#09090b" fill-opacity=".16"/>
+</svg>
