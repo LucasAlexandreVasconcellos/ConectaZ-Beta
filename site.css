@@ -4453,3 +4453,48 @@ h1 .accent {
   .auth-mode-switch button,
   .auth-signup button { transition: none; }
 }
+
+/* Lightweight product chrome for the illustrative hero preview. */
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: -7px 0 15px;
+}
+
+.preview-search,
+.preview-filter {
+  min-height: 29px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .035);
+  color: #aaaab4;
+  font-size: 9px;
+}
+
+.preview-search {
+  min-width: 0;
+  flex: 1;
+  gap: 7px;
+  padding: 0 9px;
+  white-space: nowrap;
+}
+
+.preview-search svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  stroke: #bba1f2;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.preview-filter {
+  flex: none;
+  padding: 0 9px;
+  border-color: rgba(163, 122, 255, .22);
+  background: rgba(163, 122, 255, .08);
+  color: #d6c2ff;
+}
