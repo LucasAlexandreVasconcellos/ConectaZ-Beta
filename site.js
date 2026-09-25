@@ -225,14 +225,100 @@
     const showAuthMessage = (message) => {
       if (feedback) feedback.textContent = message;
     };
+    const authTitle = document.querySelector('#auth-title');
+    const authIntro = document.querySelector('.auth-heading > p');
+    const authKicker = document.querySelector('[data-auth-kicker]');
+    const authSubmit = document.querySelector('[data-auth-submit]');
+    const authDivider = document.querySelector('[data-auth-divider]');
+    const googleLabel = document.querySelector('[data-auth-google-label]');
+    const authSwitchCopy = document.querySelector('[data-auth-switch-copy]');
+    const authModeLink = document.querySelector('[data-auth-mode-link]');
+    const emailInput = document.querySelector('#auth-email');
+    const passwordInput = document.querySelector('#auth-password');
+    const nameInput = document.querySelector('#auth-name');
+    const accountTypeInput = document.querySelector('#auth-account-type');
+    const confirmationInput = document.querySelector('#auth-password-confirm');
+    const signupFields = [...document.querySelectorAll('[data-signup-field]')];
+    const modeButtons = [...document.querySelectorAll('[data-auth-mode]')];
+    let authMode = 'login';
+
+    const setAuthMode = (mode) => {
+      authMode = mode;
+      const isSignup = mode === 'signup';
+      authForm.classList.toggle('is-signup', isSignup);
+      signupFields.forEach((field) => {
+        field.hidden = !isSignup;
+        const input = field.querySelector('input, select');
+        if (input) {
+          input.required = isSignup;
+          input.disabled = !isSignup;
+        }
+      });
+      modeButtons.forEach((button) => {
+        const selected = button.dataset.authMode === mode;
+        button.classList.toggle('is-active', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+      if (authTitle) authTitle.textContent = isSignup ? 'Sua jornada começa aqui.' : 'Bem-vindo de volta.';
+      if (authIntro) authIntro.textContent = isSignup
+        ? 'Crie seu perfil para encontrar oportunidades e desenvolver novas habilidades.'
+        : 'Entre para acompanhar oportunidades e continuar sua jornada de aprendizado.';
+      if (authKicker) authKicker.textContent = isSignup ? 'CRIE SEU PERFIL' : 'ACESSO À PLATAFORMA';
+      if (authSubmit) authSubmit.firstChild.textContent = isSignup ? 'Criar minha conta ' : 'Entrar ';
+      if (authDivider) authDivider.textContent = isSignup ? 'ou cadastre-se com' : 'ou continue com';
+      if (googleLabel) googleLabel.textContent = isSignup ? 'Criar conta com Google' : 'Continuar com Google';
+      if (authSwitchCopy) authSwitchCopy.textContent = isSignup ? 'Já tem uma conta?' : 'Ainda não tem conta?';
+      if (authModeLink) authModeLink.textContent = isSignup ? 'Entrar' : 'Criar conta grátis';
+      if (passwordInput) {
+        passwordInput.autocomplete = isSignup ? 'new-password' : 'current-password';
+        passwordInput.minLength = isSignup ? 8 : 0;
+      }
+      showAuthMessage('');
+    };
+
+    modeButtons.forEach((button) => button.addEventListener('click', () => setAuthMode(button.dataset.authMode)));
+    authModeLink?.addEventListener('click', () => setAuthMode(authMode === 'login' ? 'signup' : 'login'));
 
     authForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      showAuthMessage('Esta tela é uma prévia: a autenticação será ativada quando o serviço de contas for conectado.');
+      if (authMode === 'login') {
+        showAuthMessage('Esta tela é uma prévia: a autenticação será ativada quando o serviço de contas for conectado.');
+        return;
+      }
+
+      if (passwordInput.value !== confirmationInput.value) {
+        showAuthMessage('As senhas não conferem. Revise os dois campos e tente novamente.');
+        confirmationInput.focus();
+        return;
+      }
+
+      const email = emailInput.value.trim().toLowerCase();
+      const newAccount = {
+        name: nameInput.value.trim(),
+        email,
+        accountType: accountTypeInput.value,
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        const accounts = JSON.parse(localStorage.getItem('conectaz-demo-accounts') || '[]');
+        if (accounts.some((account) => account.email === email)) {
+          showAuthMessage('Já existe um perfil demonstrativo com este e-mail neste navegador.');
+          return;
+        }
+        accounts.push(newAccount);
+        localStorage.setItem('conectaz-demo-accounts', JSON.stringify(accounts));
+        showAuthMessage(`Perfil demonstrativo criado para ${newAccount.name}. Ele está salvo somente neste navegador; a conexão com o banco real ainda será implementada.`);
+        authForm.reset();
+      } catch (_) {
+        showAuthMessage('Não foi possível salvar a prévia neste navegador. A autenticação e o banco de dados ainda não estão conectados.');
+      }
     });
 
     document.querySelector('[data-auth-demo]')?.addEventListener('click', () => {
-      showAuthMessage('O acesso com Google ainda não está conectado à plataforma.');
+      showAuthMessage(authMode === 'signup'
+        ? 'A criação de conta com Google ainda não está conectada à plataforma.'
+        : 'O acesso com Google ainda não está conectado à plataforma.');
     });
 
     document.querySelector('[data-password-toggle]')?.addEventListener('click', (event) => {
@@ -244,6 +330,8 @@
       toggle.setAttribute('aria-pressed', String(reveal));
       toggle.setAttribute('aria-label', reveal ? 'Ocultar senha' : 'Mostrar senha');
     });
+
+    setAuthMode('login');
   }
 })();
 

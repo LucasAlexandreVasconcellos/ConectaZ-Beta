@@ -4031,7 +4031,7 @@ h1 .accent {
   letter-spacing: .13em;
 }
 
-.auth-kicker span {
+.auth-kicker > span:first-child {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -4054,6 +4054,44 @@ h1 .accent {
   color: rgba(235, 230, 245, .68);
   font-size: 13px;
   line-height: 1.6;
+}
+
+.auth-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin: 0 0 19px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, .055);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, .22);
+}
+
+.auth-mode-switch button {
+  min-height: 37px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(235, 230, 245, .61);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+}
+
+.auth-mode-switch button:hover {
+  color: white;
+}
+
+.auth-mode-switch button.is-active {
+  background: linear-gradient(110deg, rgba(183, 145, 255, .23), rgba(128, 91, 213, .17));
+  color: #f7f3ff;
+  box-shadow: inset 0 0 0 1px rgba(216, 188, 255, .16), 0 3px 12px rgba(0, 0, 0, .16);
+}
+
+.auth-field[hidden] {
+  display: none;
 }
 
 .auth-form {
@@ -4112,6 +4150,32 @@ h1 .accent {
 
 .auth-input-wrap input::placeholder {
   color: rgba(235, 230, 245, .42);
+}
+
+.auth-select-wrap select {
+  width: 100%;
+  height: 46px;
+  appearance: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--white);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.auth-select-wrap select option {
+  background: #17151d;
+  color: #f7f7fa;
+}
+
+.auth-select-chevron {
+  flex: none;
+  color: rgba(235, 230, 245, .56);
+  font-size: 19px;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .auth-password-toggle {
@@ -4250,6 +4314,33 @@ h1 .accent {
   text-decoration-color: currentColor;
 }
 
+.auth-signup button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #e0d1ff;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(216, 188, 255, .42);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.auth-signup button:hover {
+  color: white;
+  text-decoration-color: currentColor;
+}
+
+.auth-demo-note {
+  max-width: 315px;
+  margin: 15px auto 0;
+  color: rgba(235, 230, 245, .43);
+  font-size: 10px;
+  line-height: 1.55;
+  text-align: center;
+}
+
 .auth-back,
 .auth-footnote {
   position: absolute;
@@ -4301,4 +4392,6 @@ h1 .accent {
   .auth-submit,
   .auth-submit span,
   .auth-google { transition: none; }
+  .auth-mode-switch button,
+  .auth-signup button { transition: none; }
 }
