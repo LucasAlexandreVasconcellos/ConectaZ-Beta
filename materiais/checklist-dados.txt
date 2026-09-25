@@ -1,0 +1,7 @@
+CONECTAZ | CHECKLIST
+Dados na prática: do zero à análise
+
+[ ] Defini a decisão antes de analisar
+[ ] Conferi formato, unidades e valores ausentes
+[ ] Escolhi um gráfico que responde à pergunta
+[ ] Separei observações de conclusões

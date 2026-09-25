@@ -1,74 +1,65 @@
 (() => {
-  const loader = document.querySelector('.page-loader');
-  const shell = document.querySelector('.page-shell');
   const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.nav-links');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  window.addEventListener('pageshow', (event) => {
-    if (!window.location.hash && !event.persisted) {
-      requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, 0)));
-    }
-  });
-  const saveTransition = () => { try { sessionStorage.setItem('conectaz-transition', '1'); } catch (_) {} };
-  const motivation = [
-    { text: 'Algumas coisas dependem de nós; outras, não.', by: 'Epicteto · Manual, 1', href: 'https://www.gutenberg.org/files/45109/45109-h/45109-h.htm' },
-    { text: 'A mente pode transformar um impedimento em impulso para agir.', by: 'Adaptação de Marco Aurélio · Meditações, V.20', href: 'https://www.gutenberg.org/cache/epub/6920/pg6920-images.html' },
-    { text: 'Não é porque são difíceis que não ousamos; é porque não ousamos que são difíceis.', by: 'Sêneca · Cartas a Lucílio, 104.26', href: 'https://openscriptorium.com/read/seneca/104-letter-104' },
-    { text: 'Seu próximo passo não precisa esperar pelo momento perfeito.', by: 'ConectaZ · um lembrete para começar' },
-    { text: 'Uma habilidade nova pode abrir uma porta que você ainda não conhece.', by: 'ConectaZ · um lembrete para seguir' },
-  ];
-  const quoteNode = document.querySelector('[data-loader-quote]');
-  const attributionNode = document.querySelector('[data-loader-attribution]');
-  const loaderContent = loader?.querySelector('.loader-content');
-  if (loaderContent && !quoteNode) {
-    const quote = document.createElement('blockquote');
-    quote.className = 'loader-quote';
-    quote.innerHTML = '<span data-loader-quote></span><cite data-loader-attribution></cite>';
-    loaderContent.insertBefore(quote, loader.querySelector('.loader-track'));
-  }
-  const setMotivation = () => {
-    const quote = motivation[Math.floor(Math.random() * motivation.length)];
-    const textNode = document.querySelector('[data-loader-quote]');
-    const byNode = document.querySelector('[data-loader-attribution]');
-    if (textNode) textNode.textContent = quote.text;
-    if (byNode) {
-      byNode.replaceChildren();
-      if (quote.href) {
-        const source = document.createElement('a');
-        source.href = quote.href;
-        source.target = '_blank';
-        source.rel = 'noreferrer noopener';
-        source.textContent = quote.by;
-        source.setAttribute('aria-label', `${quote.by}, abrir a fonte`);
-        byNode.append(source);
-      } else byNode.textContent = quote.by;
-    }
-  };
-  const consumeTransition = () => {
-    try {
-      const pending = sessionStorage.getItem('conectaz-transition') === '1';
-      sessionStorage.removeItem('conectaz-transition');
-      return pending;
-    } catch (_) { return false; }
-  };
 
-  if (consumeTransition()) {
-    setMotivation();
-    loader?.classList.add('active');
-    window.setTimeout(() => loader?.classList.remove('active'), reducedMotion ? 20 : 1050);
+  const motivations = [
+    { text: 'Algumas coisas estão sob nosso controle; outras, não.', source: 'Epicteto · Manual, §1 · tradução livre' },
+    { text: 'A mente transforma o que impede a ação em auxílio para ela.', source: 'Marco Aurélio · Meditações, V.20 · tradução livre' },
+    { text: 'Não é porque são difíceis que não ousamos; é porque não ousamos que são difíceis.', source: 'Sêneca · Cartas a Lucílio, 104.26 · tradução livre' },
+    { text: 'Seu próximo passo não precisa esperar pelo momento perfeito.', source: 'ConectaZ · um lembrete para começar' },
+    { text: 'Uma habilidade nova pode abrir uma porta que você ainda não conhece.', source: 'ConectaZ · um lembrete para seguir' },
+  ];
+  let loader = document.querySelector('.page-loader');
+  if (!loader) {
+    loader = document.createElement('div');
+    loader.className = 'page-loader';
+    loader.setAttribute('role', 'status');
+    loader.setAttribute('aria-live', 'polite');
+    loader.setAttribute('aria-hidden', 'true');
+    loader.innerHTML = '<div class="loader-content"><div class="loader-orbit" aria-hidden="true"><span class="brand-symbol"><i class="brand-diamond"></i></span></div><blockquote class="loader-quote"><span data-loader-quote></span><cite data-loader-attribution></cite></blockquote><div class="loader-text">Conectando caminhos</div><div class="loader-track" aria-hidden="true"></div></div>';
+    document.body.prepend(loader);
   }
+  const setMotivation = (index) => {
+    const quote = motivations[index % motivations.length];
+    loader.querySelector('[data-loader-quote]').textContent = quote.text;
+    loader.querySelector('[data-loader-attribution]').textContent = quote.source;
+    try { sessionStorage.setItem('conectaz-transition-quote', String(index)); } catch (_) {}
+  };
+  const activateLoader = (index) => {
+    setMotivation(index);
+    loader.setAttribute('aria-hidden', 'false');
+    loader.classList.add('active');
+  };
+  const hideLoader = () => {
+    loader.classList.remove('active');
+    loader.setAttribute('aria-hidden', 'true');
+  };
+  let transitioning = false;
+  try {
+    const incomingQuote = Number(sessionStorage.getItem('conectaz-transition-quote'));
+    const arrivedFromPage = sessionStorage.getItem('conectaz-transition-pending') === '1';
+    sessionStorage.removeItem('conectaz-transition-pending');
+    if (arrivedFromPage) {
+      activateLoader(Number.isInteger(incomingQuote) && incomingQuote >= 0 ? incomingQuote : 0);
+      window.setTimeout(hideLoader, reducedMotion ? 90 : 190);
+    }
+  } catch (_) {}
 
   document.querySelectorAll('a[href]').forEach((link) => {
     link.addEventListener('click', (event) => {
+      if (transitioning || link.hasAttribute('download') || link.target && link.target !== '_self'
+        || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       const targetUrl = new URL(link.href, window.location.href);
-      if (!targetUrl.pathname.toLowerCase().endsWith('.html') || targetUrl.origin !== window.location.origin || targetUrl.pathname === window.location.pathname || link.hasAttribute('download') || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (targetUrl.origin !== window.location.origin
+        || !targetUrl.pathname.toLowerCase().endsWith('.html')
+        || targetUrl.pathname === window.location.pathname) return;
       event.preventDefault();
-      setMotivation();
-      saveTransition();
-      loader?.classList.add('active');
-      shell?.classList.add('leaving');
-      window.setTimeout(() => { window.location.href = targetUrl.href; }, reducedMotion ? 10 : 760);
+      transitioning = true;
+      const quoteIndex = Math.floor(Math.random() * motivations.length);
+      activateLoader(quoteIndex);
+      try { sessionStorage.setItem('conectaz-transition-pending', '1'); } catch (_) {}
+      window.setTimeout(() => window.location.assign(targetUrl.href), reducedMotion ? 100 : 520);
     });
   });
 
@@ -125,49 +116,27 @@
     courseFilters[0]?.focus();
   });
 
-  const courses = {
-    ux: {
-      title: 'Fundamentos de UX e design de produto', category: 'UX & produto', description: 'Entenda as necessidades das pessoas, transforme problemas em oportunidades e teste soluções com confiança.', instructor: 'Camila Ribeiro', initials: 'CR', level: 'Iniciante', duration: '12 horas', image: 'ux.svg', pdf: 'guia-ux-produto.pdf', quote: 'O bom design começa com curiosidade e melhora com escuta.', challenge: 'Escolha uma tarefa cotidiana e faça três conversas curtas para descobrir onde as pessoas encontram dificuldade.', checklist: ['Escrevi o problema do ponto de vista da pessoa usuária', 'Registrei evidências antes de propor a solução', 'Criei um protótipo para responder a uma hipótese', 'Observei três pessoas usando o protótipo'], modules: [
-        ['Pesquisa e descoberta', [['Conversas que revelam necessidades', 'Como preparar entrevistas curtas e abertas para entender contexto, motivação e comportamento.'], ['Mapeando a jornada atual', 'Organize etapas, dúvidas e pontos de atrito sem presumir a solução antes da hora.']]],
-        ['Estrutura e prototipação', [['Do problema à hipótese', 'Escreva uma hipótese verificável e escolha o recorte de produto que merece ser testado.'], ['Prototipar para pensar', 'Use fluxos simples e baixa fidelidade para tornar ideias conversáveis.']]],
-        ['Teste e evolução', [['Testes de usabilidade leves', 'Planeje tarefas, convide participantes e observe sem conduzir as respostas.'], ['Decisões com evidências', 'Organize aprendizados, priorize oportunidades e comunique o próximo experimento.']]]],
-    },
-    dados: {
-      title: 'Dados na prática: do zero à análise', category: 'Tecnologia & dados', description: 'Aprenda a formular perguntas, organizar dados e apresentar descobertas úteis para decisões do dia a dia.', instructor: 'André Martins', initials: 'AM', level: 'Iniciante', duration: '16 horas', image: 'data.svg', pdf: 'caderno-dados-pratica.pdf', quote: 'Uma boa pergunta é o primeiro passo de uma boa análise.', challenge: 'Use uma planilha pública ou fictícia para responder uma pergunta de negócio e escrever uma recomendação baseada em evidências.', checklist: ['Defini a decisão antes de analisar', 'Conferi formato, unidades e valores ausentes', 'Escolhi um gráfico que responde à pergunta', 'Separei observações de conclusões'], modules: [
-        ['Perguntas e qualidade dos dados', [['Da decisão à pergunta analítica', 'Converta uma dúvida ampla em uma pergunta que possa orientar uma ação concreta.'], ['Limpeza e organização', 'Confira tipos, duplicidades, vazios e consistência antes de calcular qualquer coisa.']]],
-        ['Análise e visualização', [['Resumo estatístico sem mistério', 'Use contagens, médias e comparações com atenção ao contexto e às unidades.'], ['Gráficos que explicam', 'Escolha uma visualização pela comparação que deseja tornar fácil de perceber.']]],
-        ['Comunicação de resultados', [['Da descoberta à recomendação', 'Construa uma narrativa curta que conecte pergunta, evidência, recomendação e limite.'], ['Apresentação para decisão', 'Prepare um resumo executivo e antecipe dúvidas sem esconder incertezas.']]]],
-    },
-    comunicacao: {
-      title: 'Comunicação para times que crescem', category: 'Carreira & negócios', description: 'Conduza alinhamentos melhores, escute com intenção e transforme conversas em decisões claras.', instructor: 'Renata Lima', initials: 'RL', level: 'Todos os níveis', duration: '9 horas', image: 'communication.svg', pdf: 'guia-comunicacao-times.pdf', quote: 'Clareza é uma forma de cuidado com o tempo de todo mundo.', challenge: 'Escolha uma conversa de alinhamento real. Prepare contexto e pedido, escute a outra pessoa e registre uma decisão compartilhada.', checklist: ['Expliquei o contexto e o impacto', 'Fiz um pedido específico e respeitoso', 'Confirmei o que entendi antes de responder', 'Registrei responsáveis e próximos passos'], modules: [
-        ['Clareza e escuta', [['Contexto que aproxima', 'Apresente cenário, impacto e objetivo para que a conversa comece com entendimento comum.'], ['Escuta ativa no trabalho', 'Use perguntas abertas e reformulação para checar o que foi entendido.']]],
-        ['Alinhamentos e feedback', [['Feedback orientado à ação', 'Descreva situações observáveis, impacto e uma expectativa de mudança possível.'], ['Conversas difíceis com respeito', 'Prepare fatos, cuide do momento e mantenha a conversa focada em acordos.']]],
-        ['Reuniões e decisões', [['Reuniões que chegam a algum lugar', 'Defina propósito, participantes essenciais e uma decisão que precisa sair da conversa.'], ['Acordos que viram ação', 'Feche com responsáveis, prazos, registro e um modo simples de acompanhar.']]]],
-    },
-    ia: {
-      title: 'Introdução à inteligência artificial', category: 'Tecnologia & dados', description: 'Conheça usos cotidianos de IA, aprenda a escrever boas instruções e avalie resultados com responsabilidade.', instructor: 'Rafael Souza', initials: 'RS', level: 'Iniciante', duration: '10 horas', image: 'ai.svg', pdf: 'guia-inteligencia-artificial.pdf', quote: 'Use a tecnologia para ampliar sua capacidade de pensar, não para deixar de pensar.', challenge: 'Escolha uma tarefa repetitiva, teste uma instrução em uma ferramenta de IA e revise cada afirmação com fontes confiáveis.', checklist: ['Escolhi um problema adequado à ferramenta', 'Informei contexto, público e formato', 'Verifiquei afirmações importantes', 'Protegi dados pessoais e confidenciais'], modules: [
-        ['Entendendo inteligência artificial', [['O que a IA pode e não pode fazer', 'Diferencie automação, modelos de linguagem e respostas geradas por probabilidade.'], ['Exemplos de uso no trabalho', 'Encontre tarefas de apoio sem transferir decisões sensíveis ou dados privados.']]],
-        ['Instruções e experimentação', [['Como escrever bons prompts', 'Combine papel, objetivo, contexto, restrições e formato para diminuir ambiguidades.'], ['Refinar e comparar respostas', 'Mude uma variável por vez e avalie os resultados com critérios claros.']]],
-        ['Verificação e responsabilidade', [['Checagem de fatos e vieses', 'Verifique informações, procure omissões e reconheça vieses e limitações do modelo.'], ['Uso seguro e ético', 'Proteja dados, respeite direitos de uso e mantenha supervisão humana adequada.']]]],
-    },
-    portfolio: {
-      title: 'Portfólio profissional com propósito', category: 'UX & produto', description: 'Apresente seu trabalho com contexto, autoria e evidências para que outras pessoas entendam o valor das suas decisões.', instructor: 'Júlia Nunes', initials: 'JN', level: 'Intermediário', duration: '8 horas', image: 'portfolio.svg', pdf: 'roteiro-portfolio-profissional.pdf', quote: 'Seu processo também faz parte do que você tem a oferecer.', challenge: 'Escolha um projeto e prepare um estudo de caso curto que outra pessoa consiga entender em dois minutos.', checklist: ['Expliquei meu papel e o trabalho do time', 'Apresentei contexto e restrições', 'Conectei decisões a evidências', 'Mostrei resultados sem exagerar minha contribuição'], modules: [
-        ['Posicionamento e seleção', [['O que seu portfólio precisa mostrar', 'Defina competências e públicos para selecionar trabalhos que contam uma história coerente.'], ['Escolhendo projetos com intenção', 'Compare projetos pela variedade de habilidades e pelo que ensinam a quem avalia.']]],
-        ['Estudos de caso', [['Contexto, problema e papel', 'Escreva uma abertura simples que situe desafio, objetivo, equipe e sua responsabilidade.'], ['Processo e decisões', 'Mostre opções, critérios e evidências sem transformar o estudo de caso em um diário.']]],
-        ['Apresentação e revisão', [['Resultados e aprendizados', 'Descreva impacto verificável e as perguntas que você levaria para uma próxima versão.'], ['Portfólio acessível e claro', 'Revise leitura, navegação, contraste e instruções para contato profissional.']]]],
-    },
-    produtividade: {
-      title: 'Organização e produtividade no trabalho', category: 'Carreira & negócios', description: 'Organize prioridades com intenção, proteja tempo para o que importa e feche o dia sabendo o próximo passo.', instructor: 'Lucas Freire', initials: 'LF', level: 'Todos os níveis', duration: '7 horas', image: 'productivity.svg', pdf: 'planner-produtividade-trabalho.pdf', quote: 'Progresso sustentável nasce de prioridades claras e pausas possíveis.', challenge: 'Planeje um dia realista com três resultados importantes, blocos de foco e espaço para imprevistos.', checklist: ['Transformei pendências em próximas ações', 'Escolhi prioridades pelo impacto e prazo', 'Limitei tarefas em andamento', 'Reservei tempo para pausas e imprevistos'], modules: [
-        ['Visibilidade e rotina', [['Tire tarefas da cabeça', 'Reúna compromissos em um sistema único e transforme assuntos vagos em ações observáveis.'], ['Revise sua semana', 'Identifique compromissos fixos, pendências e pontos de sobrecarga antes de planejar.']]],
-        ['Prioridades e foco', [['Decidir o que vem primeiro', 'Compare urgência, impacto e dependências para negociar o trabalho em andamento.'], ['Blocos de foco que cabem na rotina', 'Agrupe tarefas, planeje pausas e proteja períodos realistas de concentração.']]],
-        ['Ritmo sustentável', [['Interrupções e limites', 'Prepare acordos para interrupções e aprenda a renegociar quando novas demandas aparecem.'], ['Fechamento e próximo passo', 'Revise avanços sem culpa e deixe a primeira ação do dia seguinte pronta.']]]],
-    },
+  const achievementKey = 'conectaz-learning-achievements';
+  const badgeHost = document.querySelector('[data-learning-badges]');
+  const renderLearningBadges = () => {
+    if (!badgeHost) return;
+    let achievements = {};
+    try { achievements = JSON.parse(localStorage.getItem(achievementKey) || '{}'); } catch (_) {}
+    const earned = Object.entries(achievements).filter(([id]) => courses[id]);
+    if (!earned.length) {
+      badgeHost.innerHTML = '<div class="badge-empty"><span aria-hidden="true">✦</span><p>Suas trilhas concluídas vão aparecer aqui neste dispositivo.</p><a class="text-link" href="catalogo.html">Explorar cursos <span aria-hidden="true">↗</span></a></div>';
+      return;
+    }
+    badgeHost.innerHTML = earned.map(([id, item]) => `<article class="learning-badge"><span class="badge-icon" aria-hidden="true">✓</span><div><strong>${courses[id].title}</strong><small>Concluído neste dispositivo · ${new Date(item.completedAt).toLocaleDateString('pt-BR')}</small></div><a href="curso-${id}.html" aria-label="Ver trilha ${courses[id].title}">↗</a></article>`).join('');
   };
+
+  const courses = window.CONECTAZ_COURSES || {};
+  renderLearningBadges();
 
   const courseRoot = document.querySelector('[data-course-detail]');
   if (courseRoot) {
     const params = new URLSearchParams(window.location.search);
-    const courseId = params.get('curso') || 'ux';
+    const courseId = params.get('curso') || courseRoot.dataset.courseId || 'ux';
     const course = courses[courseId] || courses.ux;
     const text = (selector, value) => { const node = courseRoot.querySelector(selector); if (node) node.textContent = value; };
     document.title = `${course.title} — ConectaZ`;
@@ -191,6 +160,13 @@
     const updateProgress = () => {
       const count = completed.size;
       const percent = Math.round((count / lessonList.length) * 100);
+      try {
+        const achievements = JSON.parse(localStorage.getItem(achievementKey) || '{}');
+        if (percent === 100) achievements[courseId] = achievements[courseId] || { completedAt: new Date().toISOString() };
+        else delete achievements[courseId];
+        localStorage.setItem(achievementKey, JSON.stringify(achievements));
+      } catch (_) {}
+      renderLearningBadges();
       text('[data-progress-label]', `${percent}% concluído`);
       text('[data-progress-caption]', count ? `${count} de ${lessonList.length} aulas concluídas. Seu progresso fica salvo neste dispositivo.` : 'Escolha uma aula para começar. Seu progresso fica salvo neste dispositivo.');
       const fill = courseRoot.querySelector('[data-progress-fill]');

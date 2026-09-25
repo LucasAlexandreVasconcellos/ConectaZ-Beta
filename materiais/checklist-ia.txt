@@ -1,0 +1,7 @@
+CONECTAZ | CHECKLIST
+Introdução à inteligência artificial
+
+[ ] Escolhi um problema adequado à ferramenta
+[ ] Informei contexto, público e formato
+[ ] Verifiquei afirmações importantes
+[ ] Protegi dados pessoais e confidenciais

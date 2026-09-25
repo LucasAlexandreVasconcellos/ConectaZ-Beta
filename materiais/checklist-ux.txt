@@ -1,0 +1,7 @@
+CONECTAZ | CHECKLIST
+Fundamentos de UX e design de produto
+
+[ ] Escrevi o problema do ponto de vista da pessoa usuária
+[ ] Registrei evidências antes de propor a solução
+[ ] Criei um protótipo para responder a uma hipótese
+[ ] Observei três pessoas usando o protótipo
