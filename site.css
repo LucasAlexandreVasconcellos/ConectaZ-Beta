@@ -4016,19 +4016,26 @@ h1 .accent {
 }
 
 .auth-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 26px;
   text-align: center;
 }
 
 .auth-kicker {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  margin-bottom: 11px;
+  max-width: 100%;
+  margin: 0 auto 13px;
   color: #c7afff;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .13em;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .auth-kicker > span:first-child {
@@ -4037,6 +4044,15 @@ h1 .accent {
   border-radius: 50%;
   background: #b995ff;
   box-shadow: 0 0 12px rgba(185, 149, 255, .8);
+}
+
+.auth-page .auth-kicker > span:last-child {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  white-space: nowrap;
 }
 
 .auth-heading h1 {
@@ -4068,8 +4084,14 @@ h1 .accent {
 }
 
 .auth-mode-switch button {
+  appearance: none;
+  -webkit-appearance: none;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0 10px;
   min-height: 37px;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 10px;
   background: transparent;
   color: rgba(235, 230, 245, .61);
@@ -4088,6 +4110,12 @@ h1 .accent {
   background: linear-gradient(110deg, rgba(183, 145, 255, .23), rgba(128, 91, 213, .17));
   color: #f7f3ff;
   box-shadow: inset 0 0 0 1px rgba(216, 188, 255, .16), 0 3px 12px rgba(0, 0, 0, .16);
+}
+
+.auth-page .auth-mode-switch button {
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .auth-field[hidden] {
@@ -4337,6 +4365,7 @@ h1 .accent {
   margin: 15px auto 0;
   color: rgba(235, 230, 245, .43);
   font-size: 10px;
+  font-weight: 400;
   line-height: 1.55;
   text-align: center;
 }
