@@ -218,6 +218,33 @@
     showLesson(0);
     if (window.location.hash === '#trilha') window.setTimeout(() => document.querySelector('#trilha')?.scrollIntoView(), 30);
   }
+
+  const authForm = document.querySelector('[data-auth-form]');
+  if (authForm) {
+    const feedback = document.querySelector('[data-auth-feedback]');
+    const showAuthMessage = (message) => {
+      if (feedback) feedback.textContent = message;
+    };
+
+    authForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      showAuthMessage('Esta tela é uma prévia: a autenticação será ativada quando o serviço de contas for conectado.');
+    });
+
+    document.querySelector('[data-auth-demo]')?.addEventListener('click', () => {
+      showAuthMessage('O acesso com Google ainda não está conectado à plataforma.');
+    });
+
+    document.querySelector('[data-password-toggle]')?.addEventListener('click', (event) => {
+      const toggle = event.currentTarget;
+      const password = document.querySelector('#auth-password');
+      if (!password) return;
+      const reveal = password.type === 'password';
+      password.type = reveal ? 'text' : 'password';
+      toggle.setAttribute('aria-pressed', String(reveal));
+      toggle.setAttribute('aria-label', reveal ? 'Ocultar senha' : 'Mostrar senha');
+    });
+  }
 })();
 
 

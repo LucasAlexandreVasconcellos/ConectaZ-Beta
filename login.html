@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09090b">
+  <meta name="description" content="Acesse sua conta ConectaZ para acompanhar oportunidades e cursos.">
+  <title>Entrar — ConectaZ</title>
+  <link rel="stylesheet" href="site.css">
+  <script src="site.js" defer></script>
+</head>
+<body class="auth-page">
+  <main class="auth-layout">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <a class="brand auth-brand" href="index.html" aria-label="ConectaZ, início">
+        <span class="brand-symbol" aria-hidden="true"><i class="brand-diamond"></i></span>
+        <span>ConectaZ</span>
+      </a>
+
+      <div class="auth-heading">
+        <span class="auth-kicker"><span aria-hidden="true"></span> ACESSO À PLATAFORMA</span>
+        <h1 id="auth-title">Bem-vindo de volta.</h1>
+        <p>Entre para acompanhar oportunidades e continuar sua jornada de aprendizado.</p>
+      </div>
+
+      <form class="auth-form" data-auth-form>
+        <div class="auth-field">
+          <label for="auth-email">E-mail</label>
+          <div class="auth-input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5h16v11H4z"/><path d="m5 7.5 7 5.5 7-5.5"/></svg>
+            <input id="auth-email" name="email" type="email" placeholder="voce@exemplo.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label for="auth-password">Senha</label>
+          <div class="auth-input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v2"/></svg>
+            <input id="auth-password" name="password" type="password" placeholder="Digite sua senha" autocomplete="current-password" required>
+            <button class="auth-password-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false" data-password-toggle>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="auth-submit" type="submit">Entrar <span aria-hidden="true">↗</span></button>
+      </form>
+
+      <div class="auth-divider"><span>ou continue com</span></div>
+      <button class="auth-google" type="button" data-auth-demo>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.8 6.1-15Z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.8l-6.6-5.1c-1.8 1.2-4.1 2-6.9 2-5.3 0-9.8-3.6-11.4-8.5H5.8v5.3A20 20 0 0 0 24 44Z"/><path fill="#FBBC05" d="M12.6 27.6a12 12 0 0 1 0-7.2v-5.3H5.8a20 20 0 0 0 0 17.8l6.8-5.3Z"/><path fill="#EA4335" d="M24 11.9c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 5.9 29.5 4 24 4A20 20 0 0 0 5.8 15.1l6.8 5.3c1.6-4.9 6.1-8.5 11.4-8.5Z"/></svg>
+        Continuar com Google
+      </button>
+      <p class="auth-feedback" role="status" aria-live="polite" data-auth-feedback></p>
+
+      <p class="auth-signup">Ainda não conhece a ConectaZ? <a href="profissionais.html">Conheça a plataforma</a></p>
+    </section>
+
+    <a class="auth-back" href="index.html"><span aria-hidden="true">←</span> Voltar para o início</a>
+    <p class="auth-footnote">Talentos, oportunidades e aprendizado no mesmo lugar.</p>
+  </main>
+</body>
+</html>
