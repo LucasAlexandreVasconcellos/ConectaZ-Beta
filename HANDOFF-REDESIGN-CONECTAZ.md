@@ -55,9 +55,11 @@ que exigem back-end, terceiros e decisões comerciais:
 
 - **Repositório de origem:** `https://github.com/LucasAlexandreVasconcellos/ConectaZ-Beta`
 - **Stack:** HTML + CSS + JavaScript estático. **Nenhum framework foi ou deve ser introduzido.**
-- **Workspace:** **não há `.git`** — `git status` retorna "not a git repository".
-  **Nada foi commitado nem enviado.** Para publicar, será preciso `git init` + remote.
-- **URL de produção prevista:** `https://lucasalexandrevasconcellos.github.io/ConectaZ-Beta/`
+- **Workspace:** agora é um clone funcional: `git init -b main` sobre o histórico do remote
+  (`origin/main` = `b489c54`), identidade repo-local "Lucas Alexandre" + e-mail `noreply` do GitHub.
+  Redesign commitado em **`df59e0f`** e **publicado em `main`/GitHub Pages** (2026-10-06).
+  A identidade do git não é global no computador.
+- **URL de produção:** `https://lucasalexandrevasconcellos.github.io/ConectaZ-Beta/`
 
 ### 2.1 Arquivos e responsabilidades
 
@@ -382,7 +384,8 @@ sem `robots.txt`/`sitemap.xml`/manifest · OG images do design antigo · sem lin
 
 ### Fase A — Publicar e completar (1–2 dias)
 
-1. **[pendente]** `git init`, remote e primeiro commit (o workspace **não tem git**)
+1. **[feito ✅ 2026-10-06]** `git init` sobre o histórico do remote, commit `df59e0f` e push para
+   `main` — o GitHub Pages já serve o redesign
 2. **[feito ✅ 2026-10-06]** `robots.txt`, `sitemap.xml` (11 URLs canônicas) e `manifest.webmanifest`
    criados; manifest linkado nas 13 páginas
 3. **[não se aplica]** A URL `lucasalexandrevasconcellos.github.io/ConectaZ-Beta` já é a correta do
