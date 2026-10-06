@@ -3,6 +3,67 @@
   const nav = document.querySelector('.nav-links');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Header: estado compacto após rolagem (rAF, passive) */
+  const header = document.querySelector('.site-header');
+  if (header && !reducedMotion) {
+    let ticking = false;
+    const updateHeader = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 24);
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    }, { passive: true });
+    // Aberturas com #hash pulam sem disparar scroll: reavaliar após o salto
+    window.addEventListener('load', updateHeader);
+    window.addEventListener('hashchange', updateHeader);
+    updateHeader();
+  }
+
+  /* Spotlight do hero + parallax: um único listener, leituras em cache e
+     escritas agrupadas em rAF. Dois listeners separados alternavam
+     getBoundingClientRect() (leitura) com setProperty (escrita) e forçavam
+     layout sincrono a cada pointermove. */
+  const hero = document.querySelector('.hero');
+  const parallaxLayers = [...document.querySelectorAll('[data-parallax]')];
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+  if (hero && finePointer && !reducedMotion) {
+    let rect = hero.getBoundingClientRect();
+    let px = 0;
+    let py = 0;
+    let frame = 0;
+
+    const measure = () => { rect = hero.getBoundingClientRect(); };
+    const paint = () => {
+      frame = 0;
+      const dx = px - rect.left;
+      const dy = py - rect.top;
+      hero.style.setProperty('--mx', `${((dx / rect.width) * 100).toFixed(1)}%`);
+      hero.style.setProperty('--my', `${((dy / rect.height) * 100).toFixed(1)}%`);
+      for (const layer of parallaxLayers) {
+        const depth = Number(layer.dataset.parallax) || 1;
+        const ox = (dx / rect.width - 0.5) * depth * 8;
+        const oy = (dy / rect.height - 0.5) * depth * 6;
+        layer.style.transform = `translate3d(${(-ox).toFixed(1)}px, ${(-oy).toFixed(1)}px, 0)`;
+      }
+    };
+
+    hero.addEventListener('pointermove', (event) => {
+      px = event.clientX;
+      py = event.clientY;
+      if (!frame) frame = requestAnimationFrame(paint);
+    }, { passive: true });
+    hero.addEventListener('pointerleave', () => {
+      px = rect.left + rect.width / 2;
+      py = rect.top + rect.height / 2;
+      if (!frame) frame = requestAnimationFrame(paint);
+    }, { passive: true });
+    window.addEventListener('resize', measure, { passive: true });
+  }
+
   const motivations = [
     { text: 'Algumas coisas estão sob nosso controle; outras, não.', source: 'Epicteto · Manual, §1 · tradução livre' },
     { text: 'A mente transforma o que impede a ação em auxílio para ela.', source: 'Marco Aurélio · Meditações, V.20 · tradução livre' },
@@ -77,7 +138,7 @@
     }));
   }
 
-  document.querySelectorAll('.section-heading, .step, .feature-panel, .path-card, .course-card, .course-filter, .catalog-filters, .cta-panel, .trust-stat, .footer-links, .course-progress-card, .resource-panel, .module-item, .lesson-workspace, .sidebar-link').forEach((item) => item.classList.add('reveal'));
+  document.querySelectorAll('.section-heading, .step, .feature-panel, .path-card, .course-card, .course-filter, .catalog-filters, .cta-panel, .trust-stat, .course-progress-card, .resource-panel, .module-item, .lesson-workspace, .sidebar-link, .eco-card, .journey-node, .problem-card').forEach((item) => item.classList.add('reveal'));
   const revealItems = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reducedMotion) {
     const observer = new IntersectionObserver((entries, currentObserver) => {
@@ -106,7 +167,7 @@
       card.hidden = !matches;
       if (matches) visibleCount += 1;
     });
-    if (courseCount) courseCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'curso encontrado' : 'cursos encontrados'}`;
+    if (courseCount) courseCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'trilha encontrada' : 'trilhas encontradas'}`;
     if (noCourses) noCourses.hidden = visibleCount > 0;
   };
   courseFilters.forEach((filter) => filter.addEventListener('change', updateCourseResults));
@@ -136,7 +197,9 @@
   const courseRoot = document.querySelector('[data-course-detail]');
   if (courseRoot) {
     const params = new URLSearchParams(window.location.search);
-    const courseId = params.get('curso') || courseRoot.dataset.courseId || 'ux';
+    // O gerador coloca data-course-id no <body> (build-course-pages.mjs);
+    // fallback para o próprio <main> e, por último, para 'ux'.
+    const courseId = params.get('curso') || courseRoot.dataset.courseId || document.body.dataset.courseId || 'ux';
     const course = courses[courseId] || courses.ux;
     const text = (selector, value) => { const node = courseRoot.querySelector(selector); if (node) node.textContent = value; };
     document.title = `${course.title} — ConectaZ`;

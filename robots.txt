@@ -1,0 +1,7 @@
+# ConectaZ — protótipo público (GitHub Pages)
+# Páginas de curso são aliases de ?curso= e não precisam ser rastreadas individualmente.
+User-agent: *
+Allow: /
+Disallow: /login.html
+
+Sitemap: https://lucasalexandrevasconcellos.github.io/ConectaZ-Beta/sitemap.xml

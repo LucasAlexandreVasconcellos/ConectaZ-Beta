@@ -1,0 +1,20 @@
+{
+  "name": "ConectaZ",
+  "short_name": "ConectaZ",
+  "description": "O ecossistema que conecta empresas, talentos, conhecimento e inovação. Protótipo de conceito.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
