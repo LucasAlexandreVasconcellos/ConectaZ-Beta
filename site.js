@@ -138,7 +138,7 @@
     }));
   }
 
-  document.querySelectorAll('.section-heading, .step, .feature-panel, .path-card, .course-card, .course-filter, .catalog-filters, .cta-panel, .trust-stat, .course-progress-card, .resource-panel, .module-item, .lesson-workspace, .sidebar-link, .eco-card, .journey-node, .problem-card').forEach((item) => item.classList.add('reveal'));
+  document.querySelectorAll('.section-heading, .step, .feature-panel, .path-card, .course-card, .course-filter, .catalog-filters, .cta-panel, .trust-stat, .course-progress-card, .resource-panel, .module-item, .lesson-workspace, .sidebar-link, .eco-wheel-stage, .journey-node, .problem-card').forEach((item) => item.classList.add('reveal'));
   const revealItems = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reducedMotion) {
     const observer = new IntersectionObserver((entries, currentObserver) => {
@@ -151,6 +151,74 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -28px 0px' });
     revealItems.forEach((item) => observer.observe(item));
   } else revealItems.forEach((item) => item.classList.add('in-view'));
+
+  /* Ecossistema: pop-up de detalhe dos nós da wheel */
+  const ecoPop = document.querySelector('[data-eco-pop]');
+  if (ecoPop) {
+    const ecoPanel = ecoPop.querySelector('.eco-pop-panel');
+    const ecoIcon = ecoPop.querySelector('[data-eco-pop-icon]');
+    const ecoTag = ecoPop.querySelector('[data-eco-pop-tag]');
+    const ecoTitle = ecoPop.querySelector('[data-eco-pop-title]');
+    const ecoBody = ecoPop.querySelector('[data-eco-pop-body]');
+    const ecoFacts = ecoPop.querySelector('[data-eco-pop-facts]');
+    const ecoCta = ecoPop.querySelector('[data-eco-pop-cta]');
+    const ecoCtaLabel = ecoPop.querySelector('[data-eco-pop-cta-label]');
+    const ecoStatus = ecoPop.querySelector('[data-eco-pop-status]');
+    let ecoLastTrigger = null;
+
+    const ecoOpen = (node) => {
+      ecoLastTrigger = node;
+      const source = node.querySelector('.eco-node-icon, .eco-wheel-core-icon');
+      ecoIcon.innerHTML = source ? source.innerHTML : '';
+      ecoTag.textContent = node.dataset.ecoTag || '';
+      ecoTitle.textContent = node.dataset.ecoTitle || '';
+      ecoBody.textContent = node.dataset.ecoBody || '';
+      ecoFacts.innerHTML = '';
+      (node.dataset.ecoFacts || '').split('|').filter(Boolean).forEach((fact) => {
+        const li = document.createElement('li');
+        li.textContent = fact;
+        ecoFacts.appendChild(li);
+      });
+      if (node.dataset.ecoCtaHref) {
+        ecoCta.hidden = false;
+        ecoCta.setAttribute('href', node.dataset.ecoCtaHref);
+        ecoCtaLabel.textContent = node.dataset.ecoCtaLabel || 'Saiba mais';
+      } else ecoCta.hidden = true;
+      if (node.dataset.ecoStatus) {
+        ecoStatus.hidden = false;
+        ecoStatus.textContent = node.dataset.ecoStatus;
+      } else ecoStatus.hidden = true;
+      ecoPop.hidden = false;
+      document.body.classList.add('eco-pop-open');
+      requestAnimationFrame(() => ecoPop.classList.add('is-open'));
+      ecoPop.querySelector('.eco-pop-close').focus();
+    };
+
+    const ecoClose = () => {
+      ecoPop.classList.remove('is-open');
+      document.body.classList.remove('eco-pop-open');
+      const finish = () => { ecoPop.hidden = true; };
+      if (reducedMotion) finish(); else window.setTimeout(finish, 210);
+      if (ecoLastTrigger) ecoLastTrigger.focus();
+    };
+
+    document.querySelectorAll('[data-eco-node]').forEach((node) => {
+      node.addEventListener('click', () => ecoOpen(node));
+    });
+    ecoPop.querySelectorAll('[data-eco-close]').forEach((el) => el.addEventListener('click', ecoClose));
+    document.addEventListener('keydown', (event) => {
+      if (ecoPop.hidden) return;
+      if (event.key === 'Escape') ecoClose();
+      if (event.key === 'Tab') {
+        const focusables = ecoPanel.querySelectorAll('button, a[href]');
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    });
+  }
 
   const courseFilters = [...document.querySelectorAll('[data-course-filter]')];
   const courseCards = [...document.querySelectorAll('.course-card[data-role]')];
